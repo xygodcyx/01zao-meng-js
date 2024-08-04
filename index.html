@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>造梦西游3</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        /* box-sizing: border-box; */
+        overflow: hidden;
+      }
+      .gameWrap {
+        position: absolute;
+        width: 1440px;
+        height: 690px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        .btnWrap {
+          display: flex;
+          position: absolute;
+          left: 20px;
+          top: 100px;
+          gap: 3px;
+        }
+        canvas {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="gameWrap">
+      <canvas id="game"></canvas>
+      <canvas id="playerCloth"></canvas>
+      <canvas id="playerWeapon"></canvas>
+      <div class="btnWrap">
+        <button class="wuqi_qingyunbingdao">青云冰刀</button>
+        <button class="wuqi_zijinbingtiegun">紫金镔铁棍</button>
+        <button class="wuqi_chushi">白装武器</button>
+        <button class="yifu_jiaolongjia">蛟龙甲</button>
+        <button class="yifu_kuyeshan">枯叶杉</button>
+        <button class="yifu_chushi">白装衣服</button>
+      </div>
+      <button class="startBtn">开始游戏</button>
+    </div>
+    <script
+      type="module"
+      src="./utils/dom.js"></script>
+    <script
+      type="module"
+      src="./utils/tool.js"></script>
+    <script
+      src="./src/ZaoMeng/Index.js"
+      type="module"></script>
+  </body>
+</html>
