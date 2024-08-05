@@ -17,6 +17,7 @@ import staticBackgroundManger from './StaticBackground/StaticBackgroundManager.j
 import Floor from './StaticBackground/Floor.js'
 import Background from './StaticBackground/Background.js'
 import Cloud from './StaticBackground/Cloud.js'
+import { PlayerEnum } from './Enum/Index.js'
 
 export default class Game {
   /**
@@ -34,6 +35,14 @@ export default class Game {
   }
   init() {
     this.player = new Player()
+    this.player2 = new Player(
+      PlayerEnum.PLAYER_2,
+      new Label({
+        text: '屈侯访翠思乡2',
+        fontSizeMax: 22,
+        color: '#F9A602',
+      })
+    )
     const nameLabel = new Label({
       text: '屈侯',
       position: new Vector2(90, 60),
@@ -62,6 +71,8 @@ export default class Game {
     effectManger?.update(delta)
     enemyManger?.update(delta)
     this.player?.update(delta)
+
+    this.player2?.update(delta)
     labelManger?.update(delta)
     spriteManager?.update(delta)
     spriteAnimatedManager?.update(delta)
@@ -76,6 +87,7 @@ export default class Game {
     effectManger.render(ctx)
     enemyManger.render(ctx)
     this.player.render({ playerClothCtx, playerWeaponCtx })
+    this.player2.render({ playerClothCtx, playerWeaponCtx })
     labelManger.render(ctx)
     spriteManager.render(ctx)
     spriteAnimatedManager.render(ctx)

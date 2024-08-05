@@ -13,8 +13,8 @@ export default class Main {
   }
   renderLoop = (gameTime = 0) => {
     ctx.clearRect(0, 0, data.width, data.height)
-    // this.clearPlayerClothCanvas()
-    // this.clearPlayerWeaponCanvas()
+    this.clearPlayerClothCanvas()
+    this.clearPlayerWeaponCanvas()
     // ctx.save()
     // ctx.fillStyle = '#fff'
     // ctx.fillRect(0, data.height - data.floorHeight, data.width, 2)

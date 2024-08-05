@@ -1,6 +1,7 @@
 import data from '../../utils/data.js'
 import Component from './Component/Component.js'
 import Effect from './Effect/Effect.js'
+import { PlayerEnum } from './Enum/Index.js'
 import eventCenter from './EventCenter/EventCenter.js'
 import Input from './Input.js'
 import JumpLabel from './Label/JumpLabel.js'
@@ -122,15 +123,21 @@ export default class Player {
   leftOffset = 70
   rightOffset = 46
 
-  constructor() {
-    this.input = new Input()
-    this.key = this.input.key
-    this.nameLabel = new Label({
+  playerNumber = PlayerEnum.PLAYER_1
+
+  constructor(
+    playerNumber = PlayerEnum.PLAYER_1,
+    nameLabel = new Label({
       text: '屈侯访翠思乡',
       position: new Vector2(this.position.x, this.position.y),
       fontSizeMax: 22,
       color: '#F9A602',
     })
+  ) {
+    this.playerNumber = playerNumber
+    this.input = new Input()
+    this.key = this.input.key
+    this.nameLabel = nameLabel
     // this.nameLabel.setTextColor(this.baseColor)
     this.nameLabel.align = 'center'
     // 配置动画参数
@@ -140,28 +147,17 @@ export default class Player {
     this.weapon_anim.setFlipX(true)
     eventCenter.on('keydown', this.onKeyDown, this)
     eventCenter.on('keyup', this.onKeyUp, this)
-    setTimeout(() => {
-      this.position.x += 1 //解决图片切换延迟问题
-    })
     this.test()
   }
   test() {
     window.addEventListener('load', () => {
       this.cloths.forEach((cloth) => {
         document.querySelector(`.${'yifu_' + cloth.name}`).addEventListener('click', () => {
-          console.log(cloth)
-          setTimeout(() => {
-            this.position.x += 1
-          })
           this.cloth_anim.changeImgSrc(cloth.src)
         })
       })
       this.weapons.forEach((weapon) => {
         document.querySelector(`.${'wuqi_' + weapon.name}`).addEventListener('click', () => {
-          console.log(weapon)
-          setTimeout(() => {
-            this.position.x += 1
-          })
           this.weapon_anim.changeImgSrc(weapon.src)
         })
       })
@@ -205,12 +201,12 @@ export default class Player {
     )
   }
   onKeyDown() {
-    this.hasLeft = this.input.hasKey(this.key.Left)
-    this.hasRight = this.input.hasKey(this.key.Right)
+    this.hasLeft = this.input.hasKey(this.key.Left, this.playerNumber)
+    this.hasRight = this.input.hasKey(this.key.Right, this.playerNumber)
   }
   onKeyUp() {
-    this.hasLeft = this.input.hasKey(this.key.Left)
-    this.hasRight = this.input.hasKey(this.key.Right)
+    this.hasLeft = this.input.hasKey(this.key.Left, this.playerNumber)
+    this.hasRight = this.input.hasKey(this.key.Right, this.playerNumber)
   }
   changeDirByKey() {
     /* 

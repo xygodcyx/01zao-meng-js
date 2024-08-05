@@ -38,7 +38,14 @@ export default class SpriteAnimated {
   curMinFrame = 0
   curMaxFrame = 0
   fps = 6
-  flipX = false
+
+  //翻转
+  modiferX = 1
+  modiferY = 1
+
+  flipX = true
+  flipY = false
+
   animationTimer = 0
   animationInterval = 1 / this.fps
 
@@ -57,10 +64,8 @@ export default class SpriteAnimated {
       fps: 10,
     },
   }
-  animationConfig = this.defaultAnimationConfig
 
-  oldData = null
-  newData = null
+  animationConfig = this.defaultAnimationConfig
 
   canRender = true
 
@@ -97,28 +102,30 @@ export default class SpriteAnimated {
    * @param {CanvasRenderingContext2D} ctx - ctx
    */
   render(ctx) {
-    if (!this.canRender) return
-    ctx.clearRect(0, 0, data.width, data.height)
+    // if (!this.canRender) return
+    // ctx.clearRect(0, 0, data.width, data.height)
     this.canRender = false
     ctx.save()
+    // 破大防,根本不需要自己造轮子
+    // imageDataHRevert(ctx, this.position, this.showSize, {
+    //   frame: this.curFrame,
+    //   row: this.curRow,
+    //   src: this.img.src,
+    // })
+    this.modiferX = this.flipX ? -1 : 1 // 是否需要X轴翻转
+    this.modiferY = this.flipY ? -1 : 1 // 是否需要Y轴翻转
+    ctx.scale(this.modiferX, this.modiferY) // 翻转
     ctx.drawImage(
       this.img,
-      this.curFrame * this.frameSize.x,
-      this.curRow * this.frameSize.y,
-      this.frameSize.x,
-      this.frameSize.y,
-      this.position.x,
-      this.position.y,
-      this.showSize.x,
-      this.showSize.y
+      this.curFrame * this.frameSize.x, // 0
+      this.curRow * this.frameSize.y, // 0
+      this.frameSize.x, // 200
+      this.frameSize.y, // 200
+      this.position.x * this.modiferX,
+      this.position.y * this.modiferY,
+      this.showSize.x * this.modiferX,
+      this.showSize.y * this.modiferY
     )
-    if (this.flipX) {
-      imageDataHRevert(ctx, this.position, this.showSize, {
-        frame: this.curFrame,
-        row: this.curRow,
-        src: this.img.src,
-      })
-    }
     ctx.restore()
     this.lastPosition.set(this.position.x, this.position.y)
   }
@@ -130,10 +137,10 @@ export default class SpriteAnimated {
   }
   changeImgSrc(src) {
     this.img.src = src
-    this.init = true
+    // this.init = true
   }
   renderTimer = 0
-  renderInterval = 1 / 48
+  renderInterval = 1 / 30
   flashRender(delta) {
     this.renderTimer += delta
     if (this.renderTimer > this.renderInterval) {
