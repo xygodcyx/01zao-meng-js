@@ -46,26 +46,13 @@ export default class Player {
    * anim
    * @type {SpriteAnimated} anim - anim
    */
-  cloth_anim = new SpriteAnimated({
-    // src: 'public/img/player2.png',
-    src: 'res/hero/wukong/yifu_chushi.png',
-    scale: 1,
-    autoAddScene: false,
-  })
-  weapon_anim = new SpriteAnimated({
-    // src: 'public/img/player2.png',
-    src: 'res/hero/wukong/wuqi_chushi.png',
-    scale: 1,
-    autoAddScene: false,
-  })
+  cloth_anim
+  weapon_anim
   /**
    * position
    * @type {Vector2} position - position
    */
-  position = new Vector2(
-    data.width / 2 - this.cloth_anim.frameWidth / 2,
-    data.height - this.cloth_anim.frameHeight - data.floorHeight / 2
-  )
+  position
   animationConfig = {
     idle: {
       x: [0, 1, 2, 3, 4, 5],
@@ -88,32 +75,38 @@ export default class Player {
       fps: 10,
     },
   }
+  /**
+   * id
+   * @type {string} 角色的id - wukong/tangseng/shaseng/bajie
+   */
+  id = 'wukong'
   cloths = [
     {
-      name: 'chushi',
-      src: 'res/hero/wukong/yifu_chushi.png',
+      name: '初始',
+      src: `res/hero/wukong/yifu_初始.png`,
     },
     {
-      name: 'jiaolongjia',
-      src: 'res/hero/wukong/yifu_jiaolongjia.png',
+      name: '虬龙甲',
+      src: `res/hero/wukong/yifu_虬龙甲.png`,
     },
     {
-      name: 'kuyeshan',
-      src: 'res/hero/wukong/yifu_kuyeshan.png',
+      name: '枯叶衫',
+      src: `res/hero/wukong/yifu_枯叶衫.png`,
     },
   ]
+
   weapons = [
     {
-      name: 'chushi',
-      src: 'res/hero/wukong/wuqi_chushi.png',
+      name: '初始',
+      src: `res/hero/wukong/wuqi_初始.png`,
     },
     {
-      name: 'qingyunbingdao',
-      src: 'res/hero/wukong/wuqi_qingyunbingdao.png',
+      name: '青云冰刀',
+      src: `res/hero/wukong/wuqi_青云冰刀.png`,
     },
     {
-      name: 'zijinbingtiegun',
-      src: 'res/hero/wukong/wuqi_zijinbingtiegun.png',
+      name: '紫金镔铁棍',
+      src: `res/hero/wukong/wuqi_紫金镔铁棍.png`,
     },
   ]
   curCloth = 0
@@ -125,19 +118,26 @@ export default class Player {
 
   playerNumber = PlayerEnum.PLAYER_1
 
-  constructor(
+  constructor({
     playerNumber = PlayerEnum.PLAYER_1,
+    id = 'wukong',
     nameLabel = new Label({
-      text: '屈侯访翠思乡',
-      position: new Vector2(this.position.x, this.position.y),
+      text: '悟空',
+      position: Vector2.zero,
       fontSizeMax: 22,
       color: '#F9A602',
-    })
-  ) {
+    }),
+    cloths = this.cloths,
+    weapons = this.weapons,
+  }) {
+    this.id = id
+    this.init()
     this.playerNumber = playerNumber
     this.input = new Input()
     this.key = this.input.key
     this.nameLabel = nameLabel
+    this.cloths = cloths
+    this.weapons = weapons
     // this.nameLabel.setTextColor(this.baseColor)
     this.nameLabel.align = 'center'
     // 配置动画参数
@@ -162,13 +162,29 @@ export default class Player {
         })
       })
     })
-    setInterval(() => {
-      // this.cloth_anim.img.src = this.cloths[++this.curCloth % this.cloths.length].src
-      // this.weapon_anim.img.src = this.weapons[++this.curWeapon % this.weapons.length].src
-      // 换装
-      // this.cloth_anim.img.src = this.cloths[Math.floor(Math.random() * this.cloths.length)].src
-      // this.weapon_anim.img.src = this.weapons[Math.floor(Math.random() * this.weapons.length)].src
-    }, 1000)
+  }
+
+  init() {
+    const that = this
+    createInitPlayer()
+    initPosition()
+    function createInitPlayer() {
+      that.weapon_anim = new SpriteAnimated({
+        src: `res/hero/${that.id}/wuqi_初始.png`,
+        autoAddScene: false,
+      })
+      that.cloth_anim = new SpriteAnimated({
+        src: `res/hero/${that.id}/yifu_初始${that.id === 'shaseng' ? '_chan' : ''}.png`,
+        autoAddScene: false,
+        frameSize: that.id === 'bajie' ? new Vector2(300, 200) : new Vector2(200, 200),
+      })
+    }
+    function initPosition() {
+      that.position = new Vector2(
+        data.width / 2 - that.cloth_anim.frameWidth / 2,
+        data.height - that.cloth_anim.frameHeight - data.floorHeight / 2
+      )
+    }
   }
   update(delta) {
     this.delta = delta

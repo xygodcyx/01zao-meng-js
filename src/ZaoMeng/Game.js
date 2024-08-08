@@ -34,24 +34,66 @@ export default class Game {
     this.init()
   }
   init() {
-    this.player = new Player()
-    this.player2 = new Player(
-      PlayerEnum.PLAYER_2,
-      new Label({
-        text: '屈侯访翠思乡2',
+    this.player = new Player({})
+    this.player2 = new Player({
+      playerNumber: PlayerEnum.PLAYER_2,
+      id: 'shaseng',
+      nameLabel: new Label({
+        text: '沙僧',
         fontSizeMax: 22,
         color: '#F9A602',
-      })
-    )
+      }),
+      cloths: [
+        {
+          name: '初始',
+          src: `res/hero/shaseng/yifu_初始_chan.png`,
+        },
+        {
+          name: '枯叶衫',
+          src: `res/hero/shaseng/yifu_井木衣_chan.png`,
+        },
+        {
+          name: '虬龙甲',
+          src: `res/hero/shaseng/yifu_蛟龙甲_chan.png`,
+        },
+      ],
+
+      weapons: [
+        {
+          name: '初始',
+          src: `res/hero/shaseng/wuqi_普通的月牙铲.png`,
+        },
+        {
+          name: '青云冰刀',
+          src: `res/hero/shaseng/wuqi_银弹金弓.png`,
+        },
+        {
+          name: '紫金镔铁棍',
+          src: `res/hero/shaseng/wuqi_混元雷叉.png`,
+        },
+      ],
+    })
     const nameLabel = new Label({
-      text: '屈侯',
+      text: '悟空',
       position: new Vector2(90, 60),
       fontSizeMax: 30,
       color: this.player.baseColor,
     })
     const LevelLabel = new Label({
       text: `Lv.${this.playerLevel}`,
-      position: new Vector2(140, 60),
+      position: new Vector2(140, 70),
+      fontSizeMax: 22,
+      color: this.player.baseColor,
+    })
+    const name2Label = new Label({
+      text: '沙僧',
+      position: new Vector2(data.width - 76, 60),
+      fontSizeMax: 30,
+      color: this.player.baseColor,
+    })
+    const Level2Label = new Label({
+      text: `Lv.${this.playerLevel}`,
+      position: new Vector2(data.width - 26, 70),
       fontSizeMax: 22,
       color: this.player.baseColor,
     })
@@ -59,6 +101,11 @@ export default class Game {
       src: 'public/img/player2-head.png',
       size: new Vector2(46, 47),
       position: new Vector2(10, 60 - 47 / 1.3),
+    })
+    new Sprite({
+      src: 'public/img/player2-head.png',
+      size: new Vector2(46, 47),
+      position: new Vector2(data.width - 156, 60 - 47 / 1.3),
     })
     new Background({ position: new Vector2(0, 0) })
     new Background({ position: new Vector2(Background.width, 0) })
@@ -81,13 +128,13 @@ export default class Game {
    * render
    * @param {CanvasRenderingContext2D} ctx - ctx
    */
-  render(ctx, { playerClothCtx, playerWeaponCtx }) {
+  render(ctx, { playerClothCtx, playerWeaponCtx, player2ClothCtx, player2WeaponCtx }) {
     // 背景
     staticBackgroundManger.render(ctx)
     effectManger.render(ctx)
     enemyManger.render(ctx)
     this.player.render({ playerClothCtx, playerWeaponCtx })
-    this.player2.render({ playerClothCtx, playerWeaponCtx })
+    this.player2.render({ playerClothCtx: player2ClothCtx, playerWeaponCtx: player2WeaponCtx })
     labelManger.render(ctx)
     spriteManager.render(ctx)
     spriteAnimatedManager.render(ctx)

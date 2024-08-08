@@ -40,8 +40,8 @@ export default class SpriteAnimated {
   fps = 6
 
   //翻转
-  modiferX = 1
-  modiferY = 1
+  modifierX = 1
+  modifierY = 1
 
   flipX = true
   flipY = false
@@ -71,7 +71,7 @@ export default class SpriteAnimated {
 
   init = true
   constructor({
-    src = 'public/img/player1.png',
+    src,
     frameSize = this.frameSize,
     showSize = null,
     scale = this.scale,
@@ -112,19 +112,19 @@ export default class SpriteAnimated {
     //   row: this.curRow,
     //   src: this.img.src,
     // })
-    this.modiferX = this.flipX ? -1 : 1 // 是否需要X轴翻转
-    this.modiferY = this.flipY ? -1 : 1 // 是否需要Y轴翻转
-    ctx.scale(this.modiferX, this.modiferY) // 翻转
+    this.modifierX = this.flipX ? -1 : 1 // 是否需要X轴翻转
+    this.modifierY = this.flipY ? -1 : 1 // 是否需要Y轴翻转
+    ctx.scale(this.modifierX, this.modifierY) // 翻转
     ctx.drawImage(
       this.img,
       this.curFrame * this.frameSize.x, // 0
       this.curRow * this.frameSize.y, // 0
       this.frameSize.x, // 200
       this.frameSize.y, // 200
-      this.position.x * this.modiferX,
-      this.position.y * this.modiferY,
-      this.showSize.x * this.modiferX,
-      this.showSize.y * this.modiferY
+      this.position.x * this.modifierX,
+      this.position.y * this.modifierY,
+      this.showSize.x * this.modifierX,
+      this.showSize.y * this.modifierY
     )
     ctx.restore()
     this.lastPosition.set(this.position.x, this.position.y)

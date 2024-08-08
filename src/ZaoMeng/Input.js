@@ -4,7 +4,7 @@ import eventCenter from './EventCenter/EventCenter.js'
 const leftArrow = dom.getDom('.leftArrow')
 const rightArrow = dom.getDom('.rightArrow')
 export default class Input {
-  activeInputs = [] // a
+  activeInputs = []
   key = {
     Left: 'Left',
     Right: 'Right',
@@ -49,7 +49,6 @@ export default class Input {
     //   eventCenter.emit('keyup')
     // })
     window.addEventListener('keydown', (e) => {
-      console.log(e.key) // f
       this.addKey(this.key.Left, e.key)
       this.addKey(this.key.Right, e.key)
       eventCenter.emit('keydown')
