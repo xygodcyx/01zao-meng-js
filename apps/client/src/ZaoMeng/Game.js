@@ -17,7 +17,8 @@ import staticBackgroundManger from './StaticBackground/StaticBackgroundManager.j
 import Floor from './StaticBackground/Floor.js'
 import Background from './StaticBackground/Background.js'
 import Cloud from './StaticBackground/Cloud.js'
-import { PlayerEnum } from './Enum/Index.js'
+import { ApiEnum, PlayerEnum } from './Enum/Index.js'
+import networkManager from './Global/NetworkManager.js'
 
 export default class Game {
   /**
@@ -30,10 +31,22 @@ export default class Game {
    * @type {Array<JumpLabel | Label>} labels  - labels
    */
   playerLevel = 1
+  state = {
+    players: [],
+  }
   constructor() {
     this.init()
   }
-  init() {
+  async connectServer() {
+    if (!(await networkManager.connect().catch(() => false))) {
+      await new Promise((re) => setTimeout(re, 1000))
+      await this.connectServer()
+    } else {
+      console.log('connect server success')
+    }
+  }
+
+  async init() {
     this.player = new Player({})
     this.player2 = new Player({
       playerNumber: PlayerEnum.PLAYER_2,
@@ -111,6 +124,14 @@ export default class Game {
     new Background({ position: new Vector2(Background.width, 0) })
     new Floor({ position: new Vector2(0, data.height - data.floorHeight) })
     new Floor({ position: new Vector2(Floor.width, data.height - data.floorHeight) })
+    await this.connectServer()
+    this.login()
+  }
+  async login() {
+    const { success, res } = await networkManager.instance.callApi(ApiEnum.ApiLogin, {
+      nickname: '悟空',
+    })
+    console.log(res)
   }
   update(delta) {
     // 背景
@@ -134,7 +155,7 @@ export default class Game {
     effectManger.render(ctx)
     enemyManger.render(ctx)
     this.player.render({ playerClothCtx, playerWeaponCtx })
-    this.player2.render({ playerClothCtx: player2ClothCtx, playerWeaponCtx: player2WeaponCtx })
+    this.player2.render({ playerClothCtx, playerWeaponCtx })
     labelManger.render(ctx)
     spriteManager.render(ctx)
     spriteAnimatedManager.render(ctx)

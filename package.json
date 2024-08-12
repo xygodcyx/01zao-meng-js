@@ -1,0 +1,13 @@
+{
+  "name": "zmxy",
+  "repository": "https://github.com/xygodcyx/01zao-meng-js",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/client",
+    "apps/server"
+  ],
+  "scripts": {
+    "dev": "yarn workspace @zmxy/server run dev"
+  }
+}
