@@ -191,7 +191,6 @@ export default class Player {
     this.randomMove()
     this.autoMove(this.autoMoveTargetPosition)
     this.move(delta)
-
     this.cloth_anim.update(delta, this.position)
     this.weapon_anim.update(delta, this.position)
   }
