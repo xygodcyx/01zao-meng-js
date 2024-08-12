@@ -1,7 +1,8 @@
 import data from '../../utils/data.js'
+import { logOnce } from '../../utils/tool.js'
 import Component from './Component/Component.js'
 import Effect from './Effect/Effect.js'
-import { PlayerEnum } from './Enum/Index.js'
+import { heroNameEnum, PlayerEnum } from './Enum/Index.js'
 import eventCenter from './EventCenter/EventCenter.js'
 import Input from './Input.js'
 import JumpLabel from './Label/JumpLabel.js'
@@ -15,11 +16,6 @@ export default class Player {
    * @type {Label} nameLabel - nameLabel
    */
   nameLabel
-
-  /* 
-    other
-     */
-  baseColor = '#5b6ee1'
 
   // 输入石头
   /**
@@ -35,7 +31,7 @@ export default class Player {
   autoMoveTargetPosition = 0
   isArriveTargetPoint = false
   dir = 0
-  moveSpeed = 300
+  moveSpeed = 0.16 /* 单位是m/s */
 
   // 特效
   effectTimer = 0
@@ -57,58 +53,32 @@ export default class Player {
     idle: {
       x: [0, 1, 2, 3, 4, 5],
       y: [0],
-      fps: 12,
+      fps: 6,
     },
     walk: {
       x: [0, 1, 2, 3],
       y: [2],
-      fps: 12,
+      fps: 4,
     },
     run: {
       x: [0, 1, 2, 3],
       y: [3],
-      fps: 12,
+      fps: 4,
     },
     cloudFloor: {
       x: [4],
       y: [4],
-      fps: 10,
+      fps: 1,
     },
   }
   /**
    * id
-   * @type {string} 角色的id - wukong/tangseng/shaseng/bajie
+   * @type {string} 角色的名字(不是昵称) - wukong/tangseng/shaseng/bajie
    */
-  id = 'wukong'
-  cloths = [
-    {
-      name: '初始',
-      src: `res/hero/wukong/yifu_初始.png`,
-    },
-    {
-      name: '虬龙甲',
-      src: `res/hero/wukong/yifu_虬龙甲.png`,
-    },
-    {
-      name: '枯叶衫',
-      src: `res/hero/wukong/yifu_枯叶衫.png`,
-    },
-  ]
+  heroName = 'wukong'
+  cloths = []
 
-  weapons = [
-    {
-      name: '初始',
-      src: `res/hero/wukong/wuqi_初始.png`,
-    },
-    {
-      name: '青云冰刀',
-      src: `res/hero/wukong/wuqi_青云冰刀.png`,
-    },
-    {
-      name: '紫金镔铁棍',
-      src: `res/hero/wukong/wuqi_紫金镔铁棍.png`,
-    },
-  ]
+  weapons = []
   curCloth = 0
   curWeapon = 0
 
@@ -119,23 +89,15 @@ export default class Player {
   playerNumber = PlayerEnum.PLAYER_1
 
   constructor({
+    id,
     playerNumber = PlayerEnum.PLAYER_1,
-    id = 'wukong',
-    nameLabel = new Label({
-      text: '悟空',
-      position: Vector2.zero,
-      fontSizeMax: 22,
-      color: '#F9A602',
-    }),
     cloths = this.cloths,
     weapons = this.weapons,
   }) {
-    this.id = id
-    this.init()
+    this.init(id)
     this.playerNumber = playerNumber
     this.input = new Input()
     this.key = this.input.key
-    this.nameLabel = nameLabel
     this.cloths = cloths
     this.weapons = weapons
     // this.nameLabel.setTextColor(this.baseColor)
@@ -147,7 +109,7 @@ export default class Player {
     this.weapon_anim.setFlipX(true)
     eventCenter.on('keydown', this.onKeyDown, this)
     eventCenter.on('keyup', this.onKeyUp, this)
-    this.test()
+    // this.test()
   }
   test() {
     window.addEventListener('load', () => {
@@ -164,19 +126,24 @@ export default class Player {
     })
   }
 
-  init() {
+  init(id) {
     const that = this
+    that.heroName = id
     createInitPlayer()
     initPosition()
+    initEquip()
+    initNameLabel()
     function createInitPlayer() {
       that.weapon_anim = new SpriteAnimated({
-        src: `res/hero/${that.id}/wuqi_初始.png`,
-        autoAddScene: false,
+        src: `res/hero/${that.heroName}/wuqi_初始.png`,
+        autoAddScene: true,
       })
       that.cloth_anim = new SpriteAnimated({
-        src: `res/hero/${that.id}/yifu_初始${that.id === 'shaseng' ? '_chan' : ''}.png`,
-        autoAddScene: false,
-        frameSize: that.id === 'bajie' ? new Vector2(300, 200) : new Vector2(200, 200),
+        src: `res/hero/${that.heroName}/yifu_初始${
+          that.heroName === heroNameEnum.ShaSeng ? '_chan' : ''
+        }.png`,
+        autoAddScene: true,
+        frameSize: that.heroName === 'bajie' ? new Vector2(300, 200) : new Vector2(200, 200),
       })
     }
     function initPosition() {
@@ -185,8 +152,29 @@ export default class Player {
         data.height - that.cloth_anim.frameHeight - data.floorHeight / 2
       )
     }
+    function initEquip() {
+      that.cloths.push({
+        name: '初始',
+        src: `res/hero/${that.heroName}/yifu_初始${
+          that.heroName === heroNameEnum.ShaSeng ? '_chan' : ''
+        }.png`,
+      })
+      that.weapons.push({
+        name: '初始',
+        src: `res/hero/${that.heroName}/wuqi_初始.png`,
+      })
+    }
+    function initNameLabel() {
+      that.nameLabel = new Label({
+        text: that.heroName,
+        position: Vector2.zero,
+        fontSizeMax: 22,
+        color: '#F9A602',
+      })
+    }
   }
   update(delta) {
+    logOnce({ id: 'player update', count: 4 }, this.heroName)
     this.delta = delta
     this.randomMove()
     this.autoMove(this.autoMoveTargetPosition)
@@ -198,9 +186,9 @@ export default class Player {
    * render
    * @param {CanvasRenderingContext2D} ctx - ctx
    */
-  render({ playerClothCtx, playerWeaponCtx }) {
-    this.weapon_anim.render(playerWeaponCtx)
-    this.cloth_anim.render(playerClothCtx)
+  render(ctx) {
+    // this.weapon_anim.render(ctx)
+    // this.cloth_anim.render(ctx)
   }
 
   move(delta) {

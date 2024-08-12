@@ -25,6 +25,19 @@ export const createCanvasAndCtx = (selector = '#game') => {
     ctx,
   }
 }
+const idMap = new Map()
+export const logOnce = ({ id, count = 1 }, ...msg) => {
+  if (!idMap.has(id)) {
+    idMap.set(id, 1)
+    console.trace(id, ...msg)
+  } else {
+    if (idMap.get(id) >= count) {
+      return
+    }
+    console.trace(id, ...msg)
+    idMap.set(id, idMap.get(id) + 1)
+  }
+}
 
 let allTime = 0
 let count = 0

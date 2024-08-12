@@ -16,6 +16,10 @@ export default class Label {
   static alpha = 1
   static align = 'center'
   static font = new Font()
+  /* 
+    other
+     */
+  baseColor = '#5b6ee1'
   text = '默认文本'
   fontSizeMax = 28
   fontSize = this.fontSizeMax
@@ -43,7 +47,7 @@ export default class Label {
     text = this.text,
     position = this.position,
     fontSizeMax = this.fontSizeMax,
-    color = this.color,
+    color = this.baseColor,
     font = this.font,
     autoAddScene = true,
   }) {

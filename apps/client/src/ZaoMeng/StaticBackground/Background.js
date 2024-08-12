@@ -33,7 +33,6 @@ export default class Background {
       autoAddScene: false,
     })
     this.sprite.frameClip = clip
-    console.log(this.sprite)
     staticBackgroundManger.add(this)
   }
   update(delta) {

@@ -1,8 +1,9 @@
+import Background from './Background.js'
 import Floor from './Floor.js'
 class StaticBackgroundManager {
   /**
    * staticBackgrounds
-   * @type {Set<staticBackground>} staticBackgrounds - staticBackgrounds
+   * @type {Set<Background>} staticBackgrounds - staticBackgrounds
    */
   staticBackgrounds = new Set()
   constructor() {}

@@ -19,8 +19,8 @@ server.on('disconnection', (connection: Connection) => {
 })
 
 server.setApi(ApiEnum.ApiLogin, (connection: Connection, data: any /* 前端传来的数据 */) => {
-  const { nickname } = data
-  const player = PlayerManager.Instance.createPlayer({ nickname, connection })
+  const { nickname, heroName } = data
+  const player = PlayerManager.Instance.createPlayer({ nickname, heroName, connection })
   return {
     /* 返回给前端的数据 */
     player: PlayerManager.Instance.getPlayerView(player),

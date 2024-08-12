@@ -1,3 +1,8 @@
+export enum PlayerEnum {
+  PLAYER_1 = 'PLAYER_1',
+  PLAYER_2 = 'PLAYER_2',
+}
+
 export enum ApiEnum {
   ApiLogin = 'ApiLogin',
   ApiPlayerList = 'ApiPlayerList',

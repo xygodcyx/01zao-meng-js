@@ -20,13 +20,14 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        .btnWrap {
+        .test {
           display: flex;
           position: absolute;
           left: 20px;
           top: 100px;
           gap: 3px;
         }
+
         canvas {
           width: 100%;
           height: 100%;
@@ -42,13 +43,25 @@
       <canvas id="player2Cloth"></canvas>
       <canvas id="playerWeapon"></canvas>
       <canvas id="player2Weapon"></canvas>
-      <div class="btnWrap">
-        <button class="wuqi_青云冰刀">青云冰刀</button>
+      <div class="btnWrap test">
+        <!-- <button class="wuqi_青云冰刀">青云冰刀</button>
         <button class="wuqi_紫金镔铁棍">紫金镔铁棍</button>
         <button class="wuqi_初始">白装武器</button>
         <button class="yifu_虬龙甲">虬龙甲</button>
         <button class="yifu_枯叶衫">枯叶杉</button>
-        <button class="yifu_初始">白装衣服</button>
+        <button class="yifu_初始">白装衣服</button> -->
+      </div>
+      <div class="selectHero test">
+        <select
+          name="hero"
+          id="heroSelect"
+          value="wukong">
+          <option value="wukong">悟空</option>
+          <option value="shaseng">沙僧</option>
+          <option value="bajie">八戒</option>
+          <option value="tangseng">唐僧</option>
+        </select>
+        <button class="confirmHeroChoose">确认</button>
       </div>
       <button class="startBtn">开始游戏</button>
     </div>

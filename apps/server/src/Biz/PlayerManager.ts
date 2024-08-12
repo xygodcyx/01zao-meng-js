@@ -8,9 +8,13 @@ export class PlayerManager extends Singleton {
   static get Instance() {
     return super.GetInstance<PlayerManager>()
   }
-  createPlayer({ nickname, connection }: Pick<Player, 'nickname' | 'connection'>) {
+  createPlayer({
+    nickname,
+    heroName,
+    connection,
+  }: Pick<Player, 'nickname' | 'heroName' | 'connection'>) {
     const id = this.nextId++
-    const player = new Player({ id, nickname, connection })
+    const player = new Player({ id, nickname, heroName, connection })
     this.players.add(player)
     this.idMapPlayer.set(id, player)
     return player
@@ -18,6 +22,7 @@ export class PlayerManager extends Singleton {
   getPlayerView(player: Player) {
     return {
       id: player.id,
+      heroName: player.heroName,
       nickname: player.nickname,
     }
   }

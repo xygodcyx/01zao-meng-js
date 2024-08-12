@@ -1,163 +1,66 @@
-import Player from './Player.js'
-import JumpLabel from './Label/JumpLabel.js'
-import Label from './Label/Label.js'
-import Vector2 from './Vector/Vector2.js'
 import labelManger from './Label/LabelManager.js'
 import effectManger from './Effect/EffectManager.js'
 import spriteAnimatedManager from './SpriteAnimated/SpriteAnimatedManager.js'
 import enemyManger from './Enemy/EnemyManager.js'
 import spriteManager from './SpriteAnimated/spriteManager.js'
-import Sprite from './SpriteAnimated/Sprite.js'
-
-// data
-import data from '../../utils/data.js'
-
 // 背景
 import staticBackgroundManger from './StaticBackground/StaticBackgroundManager.js'
-import Floor from './StaticBackground/Floor.js'
-import Background from './StaticBackground/Background.js'
-import Cloud from './StaticBackground/Cloud.js'
-import { ApiEnum, PlayerEnum } from './Enum/Index.js'
-import networkManager from './Global/NetworkManager.js'
+import dataManager from './Global/DataManager.js'
+import { BattleScene } from './Scene/BattleScene.js'
+import domManager from './Global/DomManager.js'
 
 export default class Game {
-  /**
-   * player
-   * @type {Player} player - player
-   */
-  player
-  /**
-   * labels
-   * @type {Array<JumpLabel | Label>} labels  - labels
-   */
-  playerLevel = 1
-  state = {
-    players: [],
-  }
   constructor() {
     this.init()
   }
-  async connectServer() {
-    if (!(await networkManager.connect().catch(() => false))) {
-      await new Promise((re) => setTimeout(re, 1000))
-      await this.connectServer()
-    } else {
-      console.log('connect server success')
-    }
+  allInstance = []
+  /**
+   * currentScene 当前激活的场景
+   * @type {Scene} currentScene
+   */
+  currentScene = null
+  init() {
+    domManager /* 读取一下dom管理器触发引入 */
+    this.currentScene = new BattleScene()
+    this.allInstance.push(staticBackgroundManger)
+    this.allInstance.push(effectManger)
+    this.allInstance.push(enemyManger)
+    this.allInstance.push(dataManager)
+    this.allInstance.push(labelManger)
+    this.allInstance.push(spriteManager)
+    this.allInstance.push(spriteAnimatedManager)
+    this.allInstance.push(this.currentScene)
   }
 
-  async init() {
-    this.player = new Player({})
-    this.player2 = new Player({
-      playerNumber: PlayerEnum.PLAYER_2,
-      id: 'shaseng',
-      nameLabel: new Label({
-        text: '沙僧',
-        fontSizeMax: 22,
-        color: '#F9A602',
-      }),
-      cloths: [
-        {
-          name: '初始',
-          src: `res/hero/shaseng/yifu_初始_chan.png`,
-        },
-        {
-          name: '枯叶衫',
-          src: `res/hero/shaseng/yifu_井木衣_chan.png`,
-        },
-        {
-          name: '虬龙甲',
-          src: `res/hero/shaseng/yifu_蛟龙甲_chan.png`,
-        },
-      ],
-
-      weapons: [
-        {
-          name: '初始',
-          src: `res/hero/shaseng/wuqi_普通的月牙铲.png`,
-        },
-        {
-          name: '青云冰刀',
-          src: `res/hero/shaseng/wuqi_银弹金弓.png`,
-        },
-        {
-          name: '紫金镔铁棍',
-          src: `res/hero/shaseng/wuqi_混元雷叉.png`,
-        },
-      ],
+  onload() {
+    this.allInstance.forEach((instance) => {
+      instance.onload?.bind(instance).call()
     })
-    const nameLabel = new Label({
-      text: '悟空',
-      position: new Vector2(90, 60),
-      fontSizeMax: 30,
-      color: this.player.baseColor,
-    })
-    const LevelLabel = new Label({
-      text: `Lv.${this.playerLevel}`,
-      position: new Vector2(140, 70),
-      fontSizeMax: 22,
-      color: this.player.baseColor,
-    })
-    const name2Label = new Label({
-      text: '沙僧',
-      position: new Vector2(data.width - 76, 60),
-      fontSizeMax: 30,
-      color: this.player.baseColor,
-    })
-    const Level2Label = new Label({
-      text: `Lv.${this.playerLevel}`,
-      position: new Vector2(data.width - 26, 70),
-      fontSizeMax: 22,
-      color: this.player.baseColor,
-    })
-    new Sprite({
-      src: 'public/img/player2-head.png',
-      size: new Vector2(46, 47),
-      position: new Vector2(10, 60 - 47 / 1.3),
-    })
-    new Sprite({
-      src: 'public/img/player2-head.png',
-      size: new Vector2(46, 47),
-      position: new Vector2(data.width - 156, 60 - 47 / 1.3),
-    })
-    new Background({ position: new Vector2(0, 0) })
-    new Background({ position: new Vector2(Background.width, 0) })
-    new Floor({ position: new Vector2(0, data.height - data.floorHeight) })
-    new Floor({ position: new Vector2(Floor.width, data.height - data.floorHeight) })
-    await this.connectServer()
-    this.login()
   }
-  async login() {
-    const { success, res } = await networkManager.instance.callApi(ApiEnum.ApiLogin, {
-      nickname: '悟空',
+  start() {
+    this.allInstance.forEach((instance) => {
+      instance.start?.bind(instance).call()
     })
-    console.log(res)
   }
-  update(delta) {
-    // 背景
-    staticBackgroundManger?.update(delta)
-    effectManger?.update(delta)
-    enemyManger?.update(delta)
-    this.player?.update(delta)
 
-    this.player2?.update(delta)
-    labelManger?.update(delta)
-    spriteManager?.update(delta)
-    spriteAnimatedManager?.update(delta)
+  update(dt) {
+    this.allInstance.forEach((instance) => {
+      instance.update?.bind(instance, dt).call()
+    })
   }
   /**
    * render
    * @param {CanvasRenderingContext2D} ctx - ctx
    */
-  render(ctx, { playerClothCtx, playerWeaponCtx, player2ClothCtx, player2WeaponCtx }) {
+  render(ctx) {
     // 背景
-    staticBackgroundManger.render(ctx)
-    effectManger.render(ctx)
-    enemyManger.render(ctx)
-    this.player.render({ playerClothCtx, playerWeaponCtx })
-    this.player2.render({ playerClothCtx, playerWeaponCtx })
-    labelManger.render(ctx)
-    spriteManager.render(ctx)
-    spriteAnimatedManager.render(ctx)
+    this.allInstance.forEach((instance) => {
+      instance.render?.bind(instance, ctx).call()
+    })
+  }
+  destroy() {
+    this.allInstance.forEach((instance) => {
+      instance.destroy?.bind(instance).call()
+    })
   }
 }

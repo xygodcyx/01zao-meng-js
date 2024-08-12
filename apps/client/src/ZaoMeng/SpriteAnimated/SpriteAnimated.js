@@ -47,7 +47,7 @@ export default class SpriteAnimated {
   flipY = false
 
   animationTimer = 0
-  animationInterval = 1 / this.fps
+  animationInterval = 1600 / this.fps
 
   // 上一次绘制时的坐标
   lastPosition = new Vector2()
@@ -91,7 +91,6 @@ export default class SpriteAnimated {
   }
 
   update(delta, ...params) {
-    this.flashRender(delta)
     this.delta = delta
     this.animation(delta)
     const [position] = params
@@ -102,16 +101,7 @@ export default class SpriteAnimated {
    * @param {CanvasRenderingContext2D} ctx - ctx
    */
   render(ctx) {
-    // if (!this.canRender) return
-    // ctx.clearRect(0, 0, data.width, data.height)
-    this.canRender = false
     ctx.save()
-    // 破大防,根本不需要自己造轮子
-    // imageDataHRevert(ctx, this.position, this.showSize, {
-    //   frame: this.curFrame,
-    //   row: this.curRow,
-    //   src: this.img.src,
-    // })
     this.modifierX = this.flipX ? -1 : 1 // 是否需要X轴翻转
     this.modifierY = this.flipY ? -1 : 1 // 是否需要Y轴翻转
     ctx.scale(this.modifierX, this.modifierY) // 翻转
@@ -137,16 +127,6 @@ export default class SpriteAnimated {
   }
   changeImgSrc(src) {
     this.img.src = src
-    // this.init = true
-  }
-  renderTimer = 0
-  renderInterval = 1 / 30
-  flashRender(delta) {
-    this.renderTimer += delta
-    if (this.renderTimer > this.renderInterval) {
-      this.renderTimer = 0
-      this.canRender = true
-    }
   }
   animation(delta) {
     this.animationTimer += delta
@@ -156,7 +136,7 @@ export default class SpriteAnimated {
       this.curMaxFrame = curAnimation['x'][curAnimation['x'].length - 1]
       this.curRow = curAnimation['y'][0]
       this.curFrame = Math.max((this.curFrame + 1) % (this.curMaxFrame + 1), this.curMinFrame) // 循环播放动画
-      this.animationInterval = 1 / curAnimation['fps']
+      this.animationInterval = 1000 / curAnimation['fps']
       this.animationTimer = 0
     }
   }
