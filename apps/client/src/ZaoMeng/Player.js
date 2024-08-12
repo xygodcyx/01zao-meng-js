@@ -174,7 +174,7 @@ export default class Player {
     }
   }
   update(delta) {
-    logOnce({ id: 'player update', count: 4 }, this.heroName)
+    // logOnce({ id: 'player update', count: 4 }, this.heroName)
     this.delta = delta
     this.randomMove()
     this.autoMove(this.autoMoveTargetPosition)

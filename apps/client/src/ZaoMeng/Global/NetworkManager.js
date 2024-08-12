@@ -1,7 +1,4 @@
 class NetworkManager {
-  get instance() {
-    return networkManager
-  }
   /**
    * @typedef {Object} Item
    * @property {Function} cb  -

@@ -1,5 +1,5 @@
 import data from '../../../utils/data.js'
-import { ApiEnum, EventEnum } from '../Enum/Index.js'
+import { ApiEnum, EventEnum, MsgEnum } from '../Enum/Index.js'
 import eventCenter from '../EventCenter/EventCenter.js'
 import dataManager from '../Global/DataManager.js'
 import networkManager from '../Global/NetworkManager.js'
@@ -32,6 +32,7 @@ export class BattleScene extends Scene {
   async init() {
     this.initTopInfo()
     eventCenter.on(EventEnum.ChooseHero, this.handleChooseHero, this)
+    networkManager.listenMsg(MsgEnum.MsgLogin)
     this.initBackGround()
     await this.connectServer()
   }
@@ -63,8 +64,7 @@ export class BattleScene extends Scene {
     new Floor({ position: new Vector2(Floor.width, data.height - data.floorHeight) })
   }
   async handleChooseHero(hero) {
-    console.log(hero)
-    const { success, error, res } = await networkManager.instance.callApi(ApiEnum.ApiLogin, {
+    const { success, error, res } = await networkManager.callApi(ApiEnum.ApiLogin, {
       nickname: '悟空',
       heroName: hero,
     })
