@@ -16,10 +16,14 @@ export enum ApiEnum {
 
 export enum MsgEnum {
   MsgLogin = 'MsgLogin',
+  MsgLogOut = 'MsgLogOut',
+  MsgSyncClientInput = 'MsgSyncClientInput',
+  MsgSyncServerInput = 'MsgSyncServerInput',
+  MsgLastPlayerState = 'MsgLastPlayerState',
   MsgPlayerList = 'MsgPlayerList',
+  MsgPlayerSyncInGame = 'MsgPlayerSyncInGame',
   MsgGetRoomList = 'MsgGetRoomList',
   MsgGetRoom = 'MsgGetRoom',
-  MsgPlayerJoinRoom = 'MsgPlayerJoinRoom',
   MsgPlayerReady = 'MsgPlayerReady',
   MsgStartGame = 'MsgStartGame',
   MsgEndGame = 'MsgEndGame',

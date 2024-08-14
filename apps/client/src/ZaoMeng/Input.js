@@ -58,14 +58,22 @@ export default class Input {
       this.removeKey(this.key.Right, e.key)
       eventCenter.emit('keyup')
     })
+    window.addEventListener('blur', () => {
+      this.clear()
+      eventCenter.emit('keyup')
+      console.log('blur')
+    })
   }
-  addKey(wantAddKey, key = this.keyMap[wantAddKey][0]) {
+  clear() {
+    this.activeInputs = []
+  }
+  addKey(wantAddKey, key = this.keyMap[wantAddKey][0].key) {
     if (!this.judgmentExistMap(wantAddKey, key)) return
     if (!this.judgmentExist(key)) {
       this.activeInputs.push(key)
     }
   }
-  removeKey(wantRemoveKey, key = this.keyMap[wantRemoveKey][0]) {
+  removeKey(wantRemoveKey, key = this.keyMap[wantRemoveKey][0].key) {
     if (!this.judgmentExistMap(wantRemoveKey, key)) return
     if (this.judgmentExist(key)) {
       this.activeInputs.splice(this.getKeyIndex(key), 1)

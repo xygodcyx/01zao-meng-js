@@ -40,8 +40,7 @@ class NetworkManager {
           reject(false)
         }
         this.ws.onmessage = (e) => {
-          console.log('websocket收到消息: ', e.data)
-          const { name, data } = JSON.parse(e.data /* e.data是buffer类型，需要转换成字符串 */)
+          const { name, data } = JSON.parse(e.data /* e.data是string类型 */)
           this.msgMap.has(name)
             ? this.msgMap.get(name).forEach(({ cb, ctx }) => cb.call(ctx, data))
             : ''

@@ -1,11 +1,17 @@
 export const EventEnum = {
   FONT_LOADED: 'FONT_LOADED',
   ChooseHero: 'ChooseHero',
+  ClientInput: 'ClientInput',
 }
 
 export const DomEnum = {
-  HeroSelect: '#heroSelect',
+  HeroNameSelect: '#heroNameSelect',
+  PlayerNumberSelect: '#playerNumberSelect',
   ConfirmHeroChoose: '.confirmHeroChoose',
+}
+
+export const InputTypeEnum = {
+  PlayerMove: 'PlayerMove',
 }
 
 export const PlayerEnum = {
@@ -13,7 +19,7 @@ export const PlayerEnum = {
   PLAYER_2: 'PLAYER_2',
 }
 
-export const heroNameEnum = {
+export const HeroNameEnum = {
   WuKong: 'wukong',
   ShaSeng: 'shaseng',
   TangSeng: 'tangseng',
@@ -33,6 +39,10 @@ export const ApiEnum = {
 
 export const MsgEnum = {
   MsgLogin: 'MsgLogin',
+  MsgLogOut: 'MsgLogOut',
+  MsgSyncClientInput: 'MsgSyncClientInput',
+  MsgSyncServerInput: 'MsgSyncServerInput',
+  MsgLastPlayerState: 'MsgLastPlayerState',
   MsgPlayerList: 'MsgPlayerList',
   MsgGetRoomList: 'MsgGetRoomList',
   MsgGetRoom: 'MsgGetRoom',

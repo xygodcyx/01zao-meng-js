@@ -23,7 +23,7 @@
         .test {
           display: flex;
           position: absolute;
-          left: 20px;
+          left: 50%;
           top: 100px;
           gap: 3px;
         }
@@ -53,13 +53,20 @@
       </div>
       <div class="selectHero test">
         <select
-          name="hero"
-          id="heroSelect"
+          name="heroName"
+          id="heroNameSelect"
           value="wukong">
           <option value="wukong">悟空</option>
           <option value="shaseng">沙僧</option>
           <option value="bajie">八戒</option>
           <option value="tangseng">唐僧</option>
+        </select>
+        <select
+          name="playerName"
+          id="playerNumberSelect"
+          value="PLAYER_1">
+          <option value="PLAYER_1">玩家一</option>
+          <option value="PLAYER_2">玩家二</option>
         </select>
         <button class="confirmHeroChoose">确认</button>
       </div>
