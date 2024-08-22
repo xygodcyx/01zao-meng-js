@@ -107,3 +107,5 @@ export const imageDataHRevert = (ctx, position, showSize, { frame, row, src }) =
     resolve(true)
   })
 }
+
+function tween() {}

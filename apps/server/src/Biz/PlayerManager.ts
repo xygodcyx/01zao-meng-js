@@ -45,8 +45,8 @@ export class PlayerManager extends Singleton {
     })
   }
   handleLastPlayerState(connection: Connection, msg) {
-    const { position, nowDir } = msg
-    this.lastStatePlayerMap.set(connection.playerId, { position, nowDir })
+    const { id, position, nowDir } = msg
+    this.lastStatePlayerMap.set(id, { position, nowDir })
   }
   removePlayer(id: number) {
     const player = this.idMapPlayer.get(id)

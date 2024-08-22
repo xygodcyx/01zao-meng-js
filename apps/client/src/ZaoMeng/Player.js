@@ -94,7 +94,7 @@ export default class Player {
     id,
     heroName,
     playerNumber = PlayerEnum.PLAYER_1,
-    position = this.position,
+    position = null,
     nowDir = 1,
     cloths = this.cloths,
     weapons = this.weapons,

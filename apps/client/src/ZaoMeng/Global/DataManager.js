@@ -47,11 +47,13 @@ class DataManager {
     switch (input.type) {
       case InputTypeEnum.PlayerMove: {
         const { id, dir, dt, nowDir } = input
+
         const player = this.state.players.find((p) => p.id === id)
         if (player) {
           player.dir = dir
-          // player.nowDir = nowDir
+          player.nowDir = nowDir
           player.position.x += dt * dir * player.moveSpeed
+
           player.nameLabel.setPostion(
             new Vector2(
               player.position.x + player.cloth_anim.frameSize.x / 2,
@@ -59,6 +61,7 @@ class DataManager {
             )
           )
           networkManager.sendMsg(MsgEnum.MsgLastPlayerState, {
+            id: player.id,
             position: player.position,
             nowDir,
           })
