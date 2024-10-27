@@ -1,5 +1,5 @@
 import data from '../../../utils/data.js'
-import SpriteAnimated from '../SpriteAnimated/SpriteAnimated.js'
+import SpriteAnimated from './SpriteAnimated/SpriteAnimated.js'
 import Vector2 from '../Vector/Vector2.js'
 import Effect from '../Effect/Effect.js'
 import armManger from './ArmManager.js'

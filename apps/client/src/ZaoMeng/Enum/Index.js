@@ -4,14 +4,27 @@ export const EventEnum = {
   ClientInput: 'ClientInput',
 }
 
+export const GAME_MODE = {
+  Online: 'onLine',
+  OffLine: 'offLine',
+}
+
 export const DomEnum = {
+  selectHero: '.selectHero',
   HeroNameSelect: '#heroNameSelect',
   PlayerNumberSelect: '#playerNumberSelect',
   ConfirmHeroChoose: '.confirmHeroChoose',
+  gameModeChoose: '#gameModeChoose',
 }
 
 export const InputTypeEnum = {
   PlayerMove: 'PlayerMove',
+}
+export const PlayerStateEnum = {
+  IDLE: 'IDLE',
+  WALK: 'WALK',
+  RUN: 'RUN',
+  ATTACK: 'ATTACK',
 }
 
 export const PlayerEnum = {

@@ -2,13 +2,22 @@ import data from '../../utils/data.js'
 import { logOnce } from '../../utils/tool.js'
 import Component from './Component/Component.js'
 import Effect from './Effect/Effect.js'
-import { EventEnum, HeroNameEnum, InputTypeEnum, PlayerEnum } from './Enum/Index.js'
+import {
+  EventEnum,
+  HeroNameEnum,
+  InputTypeEnum,
+  PlayerEnum,
+  PlayerStateEnum,
+} from './Enum/Index.js'
 import eventCenter from './EventCenter/EventCenter.js'
 import dataManager from './Global/DataManager.js'
 import Input from './Input.js'
 import JumpLabel from './Label/JumpLabel.js'
 import Label from './Label/Label.js'
 import SpriteAnimated from './SpriteAnimated/SpriteAnimated.js'
+import { IdleState } from './StateMachine/IdleState.js'
+import StateMachine from './StateMachine/StateMachine.js'
+import { RunState } from './StateMachine/RunState.js'
 import Vector2 from './Vector/Vector2.js'
 export default class Player {
   // 昵称
@@ -41,6 +50,10 @@ export default class Player {
    * @type {SpriteAnimated} anim - anim
    */
   cloth_anim
+  /**
+   * anim
+   * @type {SpriteAnimated} anim - anim
+   */
   weapon_anim
   /**
    * position
@@ -90,18 +103,26 @@ export default class Player {
   // 面朝哪里(不参与计算,只是给别的玩家参考)
   nowDir = 1
 
+  /**
+   * @type {StateMachine} 当前角色的状态机
+   */
+  stateMachine = new StateMachine()
+  idleState = new IdleState(this.stateMachine, this, PlayerStateEnum.IDLE)
+  runState = new RunState(this.stateMachine, this, PlayerStateEnum.RUN)
   constructor({
     id,
     heroName,
     playerNumber = PlayerEnum.PLAYER_1,
     position = null,
-    nowDir = 1,
+    nowDir = 0,
     cloths = this.cloths,
     weapons = this.weapons,
   }) {
     this.init(heroName)
     this.id = id
-    position ? (this.position = new Vector2(position.x, position.y)) : ''
+    position
+      ? (this.position = new Vector2(position.x, position.y))
+      : '' /* 在init里初始化了Position */
     nowDir ? (this.nowDir = nowDir) : ''
     this.dir = nowDir
     this.playerNumber = playerNumber
@@ -151,6 +172,8 @@ export default class Player {
     initPosition()
     initEquip()
     initNameLabel()
+    this.playAnimation('idle')
+    this.stateMachine.currentState = this.idleState
     function createInitPlayer() {
       that.weapon_anim = new SpriteAnimated({
         src: `res/hero/${that.heroName}/wuqi_初始.png`,
@@ -195,7 +218,12 @@ export default class Player {
   update(delta) {
     // logOnce({ id: 'player update', count: 4 }, this.heroName)
     this.delta = delta
+    this.stateMachine.update(delta)
+    // this.changeDirByKey()
+    // this.changeFlipXByDir()
+    // this.playAnimationByDir()
     this.move(delta)
+    // this.judgmentBorder()
     this.cloth_anim.update(delta, this.position)
     this.weapon_anim.update(delta, this.position)
   }
@@ -208,10 +236,6 @@ export default class Player {
     this.cloth_anim.render(ctx) /* 还是要在各自的player里render,不然不好控制 */
     this.nameLabel.render(ctx)
     // 这些所有玩家都要判断
-    this.changeDirByKey()
-    this.changeFlipXByDir()
-    this.playAnimationByDir()
-    this.judgmentBorder()
   }
 
   move(delta) {
@@ -290,19 +314,19 @@ export default class Player {
         this.playAnimation('idle')
     }
   }
-  judgmentBorder() {
-    if (this.position.x > data.width - this.cloth_anim.frameSize.x + this.rightOffset) {
-      this.position.x = data.width - this.cloth_anim.frameSize.x + this.rightOffset
-      // this.playAnimation('idle')
-    } else if (this.position.x + this.leftOffset < 0) {
-      this.position.x = -this.leftOffset
-      // this.playAnimation('idle')
-      new JumpLabel()
-    } else if (this.cloth_anim.curAnimationName == 'walk') {
-      this.effectTimer += this.delta
-      if (this.effectTimer > this.effectInterval) {
-        this.effectTimer = 0
-      }
-    }
-  }
+  // judgmentBorder() {
+  //   if (this.position.x > data.width - this.cloth_anim.frameSize.x + this.rightOffset) {
+  //     this.position.x = data.width - this.cloth_anim.frameSize.x + this.rightOffset
+  //     // this.playAnimation('idle')
+  //   } else if (this.position.x + this.leftOffset < 0) {
+  //     this.position.x = -this.leftOffset
+  //     // this.playAnimation('idle')
+  //     new JumpLabel()
+  //   } else if (this.cloth_anim.curAnimationName == 'walk') {
+  //     this.effectTimer += this.delta
+  //     if (this.effectTimer > this.effectInterval) {
+  //       this.effectTimer = 0
+  //     }
+  //   }
+  // }
 }

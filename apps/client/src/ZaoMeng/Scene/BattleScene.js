@@ -1,5 +1,5 @@
 import data from '../../../utils/data.js'
-import { ApiEnum, EventEnum, HeroNameEnum, MsgEnum, PlayerEnum } from '../Enum/Index.js'
+import { ApiEnum, EventEnum, GAME_MODE, HeroNameEnum, MsgEnum, PlayerEnum } from '../Enum/Index.js'
 import eventCenter from '../EventCenter/EventCenter.js'
 import dataManager from '../Global/DataManager.js'
 import networkManager from '../Global/NetworkManager.js'
@@ -10,6 +10,8 @@ import Background from '../StaticBackground/Background.js'
 import Floor from '../StaticBackground/Floor.js'
 import Vector2 from '../Vector/Vector2.js'
 import Scene from './Scene.js'
+
+let clientId = 0 /* 单机的玩家id */
 export class BattleScene extends Scene {
   /**
    * labels
@@ -19,6 +21,7 @@ export class BattleScene extends Scene {
 
   start() {
     this.init()
+    // this.test()
   }
   async connectServer() {
     if (!(await networkManager.connect().catch(() => false))) {
@@ -33,29 +36,29 @@ export class BattleScene extends Scene {
     this.initTopInfo()
     eventCenter.on(EventEnum.ChooseHero, this.handleChooseHero, this)
     eventCenter.on(EventEnum.ClientInput, this.hanldClientInput, this)
-    networkManager.listenMsg(MsgEnum.MsgLogin, this.handleMsgLogin, this)
-    networkManager.listenMsg(MsgEnum.MsgLogOut, this.handleMsgLoginOut, this)
-    networkManager.listenMsg(MsgEnum.MsgSyncServerInput, this.handleMsgSyncServerInput, this)
+    if (dataManager.gameMode === GAME_MODE.Online) {
+      networkManager.listenMsg(MsgEnum.MsgLogin, this.handleMsgLogin, this)
+      networkManager.listenMsg(MsgEnum.MsgLogOut, this.handleMsgLoginOut, this)
+      networkManager.listenMsg(MsgEnum.MsgSyncServerInput, this.handleMsgSyncServerInput, this)
+    }
     this.initBackGround()
-    await this.connectServer()
+    if (dataManager.gameMode === GAME_MODE.Online) {
+      await this.connectServer()
+    }
   }
   test(id = 999, heroName = HeroNameEnum.ShaSeng, playerNumber = PlayerEnum.PLAYER_1) {
-    dataManager.playerNumberPlayerIdMap.set(playerNumber, id) /* 先保存再生成player */
-    const player = new Player({
-      id: id,
-      playerNumber: playerNumber,
-      heroName: heroName,
-    })
-    player.cloth_anim.changeImgSrc('res/hero/shaseng/yifu_初始_chan.png')
-    player.weapon_anim.changeImgSrc('res/hero/shaseng/wuqi_初始.png')
-    dataManager.state.players.push(player)
+    dataManager.playerNumberPlayerIdMap.set(playerNumber, clientId) /* 先保存再生成player */
+    /* 生成自己 */
+    dataManager.createPlayer(clientId++, heroName, playerNumber)
   }
   destroy() {
     eventCenter.off(EventEnum.ChooseHero, this.handleChooseHero, this)
     eventCenter.off(EventEnum.ClientInput, this.hanldClientInput, this)
-    networkManager.unlistenMsg(MsgEnum.MsgLogin, this.handleMsgLogin, this)
-    networkManager.unlistenMsg(MsgEnum.MsgLogOut, this.handleMsgLoginOut, this)
-    networkManager.unlistenMsg(MsgEnum.MsgSyncServerInput, this.handleMsgSyncServerInput, this)
+    if (dataManager.gameMode === GAME_MODE.Online) {
+      networkManager.unlistenMsg(MsgEnum.MsgLogin, this.handleMsgLogin, this)
+      networkManager.unlistenMsg(MsgEnum.MsgLogOut, this.handleMsgLoginOut, this)
+      networkManager.unlistenMsg(MsgEnum.MsgSyncServerInput, this.handleMsgSyncServerInput, this)
+    }
     dataManager.destroy()
   }
 
@@ -84,28 +87,34 @@ export class BattleScene extends Scene {
   }
   async handleChooseHero({ heroName, playerNumber }) {
     // 只会执行一次
-    const { success, error, res } = await networkManager.callApi(ApiEnum.ApiLogin, {
-      nickname: '悟空',
-      heroName: heroName,
-      playerNumber: playerNumber,
-    })
-    if (success) {
-      // dataManager.createPlayer(res.player.heroName)
-      console.log(res)
-      /* 先保存再生成player */
-      dataManager.playerNumberPlayerIdMap.set(res.player.playerNumber, res.player.id)
+    if (dataManager.gameMode === GAME_MODE.OffLine) {
+      dataManager.playerNumberPlayerIdMap.set(playerNumber, clientId)
       /* 生成自己 */
-      dataManager.createPlayer(res.player.id, res.player.heroName, res.player.playerNumber)
-      /* 生成其他玩家 */
-      res.players.forEach((p, i) => {
-        dataManager.createPlayer(
-          p.id,
-          p.heroName,
-          p.playerNumber,
-          res.playersLastState[i].position,
-          res.playersLastState[i].nowDir
-        )
+      dataManager.createPlayer(clientId++, heroName, playerNumber)
+    } else {
+      const { success, error, res } = await networkManager.callApi(ApiEnum.ApiLogin, {
+        nickname: '悟空',
+        heroName: heroName,
+        playerNumber: playerNumber,
       })
+      if (success) {
+        // dataManager.createPlayer(res.player.heroName)
+        console.log(res)
+        /* 先保存再生成player */
+        dataManager.playerNumberPlayerIdMap.set(res.player.playerNumber, res.player.id)
+        /* 生成自己 */
+        dataManager.createPlayer(res.player.id, res.player.heroName, res.player.playerNumber)
+        /* 生成其他玩家 */
+        res.players.forEach((p, i) => {
+          dataManager.createPlayer(
+            p.id,
+            p.heroName,
+            p.playerNumber,
+            res.playersLastState[i].position,
+            res.playersLastState[i].nowDir
+          )
+        })
+      }
     }
   }
   handleMsgLogin(res) {
@@ -126,13 +135,15 @@ export class BattleScene extends Scene {
   }
   hanldClientInput(input) {
     // 客户端输入
-    const msg = {
-      input,
-      lastFrame: dataManager.frameId || 0,
+    if (dataManager.gameMode === GAME_MODE.OffLine) {
+      dataManager.applyInput(input)
+    } else {
+      const msg = {
+        input,
+        lastFrame: dataManager.frameId || 0,
+      }
+      networkManager.sendMsg(MsgEnum.MsgSyncClientInput, msg)
     }
-
-    networkManager.sendMsg(MsgEnum.MsgSyncClientInput, msg)
-    // dataManager.applyInput(input)
   }
   handleMsgSyncServerInput(msg) {
     const { inputs, lastFrame } = msg
