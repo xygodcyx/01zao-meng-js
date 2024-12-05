@@ -40,7 +40,7 @@ class DataManager {
    */
   playerNumberPlayerIdMap = new Map() /* 只操作自己 */
 
-  gameMode = GAME_MODE.OffLine
+  gameMode = GAME_MODE.Online
 
   render(ctx) {
     // logOnce('ctx', ctx)

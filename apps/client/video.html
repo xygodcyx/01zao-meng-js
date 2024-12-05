@@ -81,8 +81,9 @@
       function posint2Index(x, y) {
         return (y * canvas.width + x) * 4
       }
+
       function getColorInfo(imgData) {
-        const gap = 16
+        const gap = 10
         return new Promise((resolve, reject) => {
           const { data, width, height } = imgData
           const colorArr = []
