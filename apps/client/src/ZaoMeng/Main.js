@@ -1,12 +1,7 @@
 import data from '../../utils/data.js'
 import Game from './Game.js'
 import { createCanvasAndCtx } from '../../utils/tool.js'
-import GameManager from './Singleton/GameManager.js'
 const { canvas, ctx } = createCanvasAndCtx()
-// const { canvas: playerClothCanvas, ctx: playerClothCtx } = createCanvasAndCtx('#playerCloth')
-// const { canvas: player2ClothCanvas, ctx: player2ClothCtx } = createCanvasAndCtx('#player2Cloth')
-// const { canvas: playerWeaponCanvas, ctx: playerWeaponCtx } = createCanvasAndCtx('#playerWeapon')
-// const { canvas: player2WeaponCanvas, ctx: player2WeaponCtx } = createCanvasAndCtx('#player2Weapon')
 export default class Main {
   delta = 0.2
   gameLastTime = 0

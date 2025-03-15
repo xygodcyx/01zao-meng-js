@@ -2,4 +2,12 @@
   "cSpell.words": [
     "unlisten"
   ],
+  "python.autoComplete.extraPaths": [
+    "c:\\Users\\屈侯\\.vscode\\extensions\\walklinewang.code-completion-for-micropython-0.1.9\\code_completion\\zh-cn"
+  ],
+  "python.analysis.extraPaths": [
+    "c:\\Users\\屈侯\\.vscode\\extensions\\walklinewang.code-completion-for-micropython-0.1.9\\code_completion\\zh-cn"
+  ],
+  "python.analysis.stubPath": "c:\\Users\\屈侯\\.vscode\\extensions\\walklinewang.code-completion-for-micropython-0.1.9\\code_completion\\zh-cn",
+  "micropython.enableCodeCompletion": true,
 }

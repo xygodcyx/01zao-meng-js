@@ -4,12 +4,12 @@ import {
   InputTypeEnum,
   MsgEnum,
   PlayerEnum,
-} from '../Enum/Index.js'
-import Player from '../Player.js'
-import Effect from '../Effect/Effect.js'
-import Vector2 from '../Vector/Vector2.js'
-import networkManager from './NetworkManager.js'
-import data from '../../../utils/data.js'
+} from '../Enum/Index.js';
+import Player from '../Player.js';
+import Effect from '../Effect/Effect.js';
+import Vector2 from '../Vector/Vector2.js';
+import networkManager from './NetworkManager.js';
+import data from '../../../utils/data.js';
 
 /**
  * @typedef {Object} IState
@@ -31,16 +31,16 @@ class DataManager {
       // }),
     ],
     effects: [] /*  */,
-  }
+  };
   // myPlayerId = 0
-  frameId = 0
+  frameId = 0;
   /**
    * playerNumberPlayerIdMap 用于存储playerNumber和playerId的映射关系
    * @type {Map<string, number>}  -
    */
-  playerNumberPlayerIdMap = new Map() /* 只操作自己 */
+  playerNumberPlayerIdMap = new Map(); /* 只操作自己 */
 
-  gameMode = GAME_MODE.Online
+  gameMode = GAME_MODE.OffLine;
 
   render(ctx) {
     // logOnce('ctx', ctx)
@@ -48,23 +48,33 @@ class DataManager {
   applyInput(input) {
     switch (input.type) {
       case InputTypeEnum.PlayerMove: {
-        const { id, dir, dt, nowDir } = input
-        const player = this.state.players.find((p) => p.id === id)
+        const { id, dir, dt, nowDir } = input;
+        const player = this.state.players.find((p) => p.id === id);
         if (player) {
-          player.dir = dir
-          player.nowDir = nowDir
-          player.position.x += dt * dir * player.moveSpeed
-
-          if (player.position.x > data.width - player.cloth_anim.frameSize.x + player.rightOffset) {
-            player.position.x = data.width - player.cloth_anim.frameSize.x + player.rightOffset
+          player.dir = dir;
+          player.nowDir = nowDir;
+          player.velocity.x = dir * player.moveSpeed;
+          player.position.x += dt * player.velocity.x;
+          player.velocity.y += 0.06;
+          player.position.y += dt * player.velocity.y * 0.5;
+          if (player.position.y > 442.5) {
+            player.position.y = 442.5;
+            player.velocity.y = 0;
+          }
+          if (
+            player.position.x >
+            data.width - player.cloth_anim.frameSize.x + player.rightOffset
+          ) {
+            player.position.x =
+              data.width - player.cloth_anim.frameSize.x + player.rightOffset;
             // player.playAnimation('idle')
           } else if (player.position.x + player.leftOffset < 0) {
-            player.position.x = -player.leftOffset
+            player.position.x = -player.leftOffset;
             // player.playAnimation('idle')
           } else if (player.cloth_anim.curAnimationName == 'walk') {
-            player.effectTimer += player.delta
+            player.effectTimer += player.delta;
             if (player.effectTimer > player.effectInterval) {
-              player.effectTimer = 0
+              player.effectTimer = 0;
             }
           }
           player.nameLabel.setPostion(
@@ -72,40 +82,48 @@ class DataManager {
               player.position.x + player.cloth_anim.frameSize.x / 2,
               player.position.y + player.nameLabel.height * 2.1
             )
-          )
+          );
           if (this.gameMode === GAME_MODE.Online) {
             networkManager.sendMsg(MsgEnum.MsgLastPlayerState, {
               id: player.id,
               position: player.position,
               nowDir,
-            })
+            });
           }
         }
-        break
+        break;
       }
     }
   }
 
   update(dt) {
-    this.state.players.forEach((p) => p.update(dt))
-    this.state.effects.forEach((e) => e.update(dt))
+    this.state.players.forEach((p) => p.update(dt));
+    this.state.effects.forEach((e) => e.update(dt));
   }
-  createPlayer(id, heroName, playerNumber = PlayerEnum.PLAYER_1, position, nowDir) {
-    this.state.players.push(new Player({ id, heroName, playerNumber, position, nowDir }))
+  createPlayer(
+    id,
+    heroName,
+    playerNumber = PlayerEnum.PLAYER_1,
+    position,
+    nowDir
+  ) {
+    this.state.players.push(
+      new Player({ id, heroName, playerNumber, position, nowDir })
+    );
   }
   removePlayer(id) {
-    const index = this.state.players.findIndex((p) => p.id === id)
-    console.log('removePlayer', index)
-    this.state.players.splice(index, 1)
+    const index = this.state.players.findIndex((p) => p.id === id);
+    console.log('removePlayer', index);
+    this.state.players.splice(index, 1);
   }
   destroy() {
-    this.state.players.forEach((p) => p.destroy())
-    this.state.effects.forEach((e) => e.destroy())
-    this.state.players = []
-    this.state.effects = []
+    this.state.players.forEach((p) => p.destroy());
+    this.state.effects.forEach((e) => e.destroy());
+    this.state.players = [];
+    this.state.effects = [];
   }
 }
 
-const dataManager = new DataManager()
+const dataManager = new DataManager();
 
-export default dataManager
+export default dataManager;
